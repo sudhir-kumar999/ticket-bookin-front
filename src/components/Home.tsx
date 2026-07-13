@@ -26,15 +26,18 @@ const Home = () => {
                 }}
             >
                 <Typography variant="h3" sx={{ mr: 5 }}>
-                  Movie Ticket
+                  Movie Ticket Booking
                 </Typography>
-                <Typewriter
-                    options={{
-                        strings: ["Hello", "World"],
-                        autoStart: true,
-                        loop: true,
-                    }}
-                />
+                <Box sx={{fontSize:"3rem",fontWeight:"bold"}}>
+                    <Typewriter
+                        options={{
+                            strings: ["Secure", "Fastest"],
+                            autoStart: true,
+                            loop: true,
+                        }}
+                    
+                    />
+                </Box>
                 <Typography variant="h3" sx={{ ml: 5 }}>
                   Platform
                 </Typography>
@@ -119,7 +122,6 @@ const Home = () => {
                                 Go to Signup Page
                                 </Link>
                             </Button>
-                            {/* <Button size="large" variant='contained' ><Link to="/usersignup" >Go to Login Page</Link></Button> */}
                         </CardActions>
                     </Card>
                 </Box>

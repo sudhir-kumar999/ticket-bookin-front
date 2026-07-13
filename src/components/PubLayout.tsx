@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import PubNav from "./PubNav";
-// import React, { useContext} from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";

@@ -1,15 +1,15 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import apiData from "../../../api/apidata";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
-import Fab from "@mui/material/Fab";
 import { toast } from "react-toastify";
-
+import Button from "@mui/material/Button";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 interface Seats {
   id: string;
   heldByMe: boolean;
@@ -24,12 +24,26 @@ const SeatList = () => {
     const { showId } = useParams();
     const [loading, setLoading] = useState(true);
     const [seat, setSeat] = useState<Seats[]>([]);
+    const [amount,setAmount]=useState(0);
+    const [seatId,setSeatId]=useState<Seats[]>([]);
+    const navigate=useNavigate();
+
     const fetchSeat = async () => {
         try {
             setLoading(true);
             const res = await apiData.get(`/user/shows/${showId}/seats`);
             if (res.data.success) {
                 setSeat(res.data.data);
+                const seats=res.data.data;
+                const totalAmount=seats.reduce((total:number,seat:Seats)=>{
+                    if(seat.heldByMe){
+                        return total+seat.price;
+                    }
+                    return total;
+                },0);
+                setAmount(totalAmount);
+                const heldSeats=seats.filter((ele:Seats) => ele.heldByMe);
+                setSeatId(heldSeats);
             }
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -61,6 +75,15 @@ const SeatList = () => {
                 toast.error("something went wrong");
             }
         }
+    }
+    function handleProceed(){
+        navigate("/payment",{
+            state:{
+                seats:seatId,
+                amount,
+                showId
+            }
+        });
     }
     if (loading) {
         return (
@@ -99,7 +122,6 @@ const SeatList = () => {
             <Typography variant="h5" sx={{ mb: 2 }}>
         Premium Seats
             </Typography>
-
             <Grid container spacing={2} sx={{ maxWidth: "70vw" }}>
                 {seat
                     .filter((s) => s.seatType === "Premium")
@@ -149,11 +171,17 @@ const SeatList = () => {
                                         width: "100px",
                                         p: 2,
                                         backgroundColor:
-                                        ele.status === "available"
-                                            ? "white"
-                                            : ele.status === "booked"
-                                                ? "gray"
-                                                : "orange",
+                                    ele.heldByMe
+                                        ? "green"
+                                        : ele.status === "booked"
+                                            ? "gray"
+                                            : ele.status === "held"
+                                                ? "yellow"
+                                                : "white",
+                                        color:
+                                    ele.heldByMe || ele.status === "booked"
+                                        ? "white"
+                                        : "black",
                                         cursor: "pointer",
                                     }}
                                     onClick={() => {
@@ -169,17 +197,19 @@ const SeatList = () => {
                 </Grid>
             )}
             <Box sx={{ "& > :not(style)": { m: 1 } }}>
-                <Fab
-                    variant="extended"
+                <Button
+                    variant="contained"
                     color="primary"
                     sx={{
                         position: "fixed",
                         bottom: 16,
                         right: 16,
                     }}
+                    disabled={amount<=0}
+                    onClick={handleProceed}
                 >
-                    Extended
-                </Fab>
+                    Proceed To Booking {amount} <ArrowForwardIcon/>
+                </Button>
             </Box>
         </Box>
     );

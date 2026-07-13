@@ -24,7 +24,7 @@ const NotFound = () => {
         return <Navigate to="/admin/dashboard" replace />;
     }
     if (user?.role === "user") {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/user/dashboard" replace />;
     }
     return <Navigate to="/" replace />;
 };

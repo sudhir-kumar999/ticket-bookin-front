@@ -136,6 +136,7 @@ const MovieUserList = () => {
                                         <Button
                                             variant="contained"
                                             onClick={() => navigate(`/movies/${movie.id}`)}
+                                            disabled={loading}
                                         >
                                           Book Ticket
                                         </Button>

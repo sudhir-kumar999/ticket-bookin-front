@@ -1,5 +1,3 @@
-"use client";
-
 import {  useContext, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
@@ -24,8 +22,10 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import GridViewIcon from "@mui/icons-material/GridView";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import LogoutIcon from "@mui/icons-material/Logout";
+import AddIcon from "@mui/icons-material/Add";
 import  { Link, Outlet } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import BookOnlineIcon from "@mui/icons-material/BookOnline";
 
 const drawerWidth = 280;
 
@@ -68,13 +68,18 @@ function AdminLayout() {
         },
         {
             title: "Create Show",
-            icon: <UploadFileIcon />,
+            icon: <AddIcon/>,
             href: "/admin/create-show",
         },
         {
             title: "All Show",
             icon: <UploadFileIcon />,
             href: "/admin/all-show",
+        },
+        {
+            title: "All Bookings",
+            icon: <BookOnlineIcon />,
+            href: "/booking/all",
         },
     ];
     const drawer = (
@@ -131,7 +136,7 @@ function AdminLayout() {
                     startIcon={<LogoutIcon />}
                     onClick={handleLogout}
                 >
-          Logout
+                    Logout
                 </Button>
             </Box>
         </Box>
@@ -173,7 +178,7 @@ function AdminLayout() {
                             fontWeight: 700,
                         }}
                     >
-            Teacher Panel
+            Hello Admin
                     </Typography>
                 </Toolbar>
             </AppBar>

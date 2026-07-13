@@ -8,7 +8,7 @@ const PubNav = () => {
                 sx={{p:2 ,borderBottom:3 }}
             >
                 <Typography variant='h5'>
-            Movie Flex
+           Book My Ticket
                 </Typography>
             </Box>
         </Box>

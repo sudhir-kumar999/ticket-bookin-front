@@ -16,11 +16,11 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import PeopleIcon from "@mui/icons-material/People";
 import LogoutIcon from "@mui/icons-material/Logout";
 import  { Link, Outlet } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-
+import MovieFilterIcon from "@mui/icons-material/MovieFilter";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 const drawerWidth = 280;
 
 function MainLayout() {
@@ -40,14 +40,14 @@ function MainLayout() {
         },
         {
             title: "Movie List",
-            icon: <PeopleIcon />,
+            icon: <MovieFilterIcon />,
             href: "/user/movie-list",
         },
-    // {
-    //   title: "Theatre List",
-    //   icon: <AssessmentIcon />,
-    //   href: "/admin/theatres",
-    // },
+        {
+            title: "My Bookings",
+            icon: <ConfirmationNumberIcon />,
+            href: "/booking/history",
+        },
     // {
     //   title: "Search Movie",
     //   icon: <QuizIcon />,
@@ -159,7 +159,7 @@ function MainLayout() {
                             fontWeight: 700,
                         }}
                     >
-            Teacher Panel
+                        Hello {user?.name}
                     </Typography>
                 </Toolbar>
             </AppBar>

@@ -7,6 +7,8 @@ import Typography from "@mui/material/Typography";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 const UserLogin = () => {
     const { userLogin } = useContext(AuthContext)!;
     const navigate = useNavigate();
@@ -14,6 +16,7 @@ const UserLogin = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading,setLoading]=useState(false);
+    const [showPassword,setShowPassword]=useState(false);
 
     const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
@@ -64,7 +67,7 @@ const UserLogin = () => {
                 <Box
                     component="form"
                     onSubmit={handleSubmit}
-                    sx={{display:"flex",flexDirection:"column",gap:2}}
+                    sx={{display:"flex",flexDirection:"column",gap:2,position:"relative"}}
                 >
                     <Typography sx={{color:"red"}}>{error}</Typography>
                     <TextField
@@ -79,12 +82,15 @@ const UserLogin = () => {
                     <TextField
                         label="Password"
                         name="password"
-                        type="password"
+                        type={showPassword ? "text":"password"}
                         fullWidth
                         required
                         value={password}
                         onChange={(e)=>setPassword(e.target.value)}
                     />
+                    <Box sx={{position:"absolute",right:10,top:"47%"}}>
+                        <Button onClick={()=>setShowPassword(!showPassword)}>{showPassword?<VisibilityOffIcon/>:<VisibilityIcon/>}</Button>
+                    </Box>
                     <Button
                         type="submit"
                         variant="contained"
@@ -92,7 +98,7 @@ const UserLogin = () => {
                         sx={{ mt: 1 }}
                         disabled={loading}
                     >
-            Sign Up
+            Log in
                     </Button>
                 </Box>
                 <Typography sx={{marginTop:2}}><Link to="/usersignup"style={{textDecoration: "none",color: "inherit",}}>

@@ -1,4 +1,3 @@
-// import { useState } from 'react'
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -23,6 +22,9 @@ import MovieDetaiols from "./components/user/MovieDetaiols";
 import ShowsList from "./components/user/ShowsList";
 import SeatList from "./components/user/SeatList";
 import NotFound from "./components/NotFound";
+import Booking from "./components/user/Booking";
+import MyBooking from "./components/user/MyBooking";
+import AllBookings from "./components/admin/AllBookings";
 function App() {
     return (
         <>
@@ -34,7 +36,6 @@ function App() {
                     <Route path="/usersignup" element={<Signup />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
- 
                 <Route
                     element={
                         <ProtectedRoute allowedRole="user">
@@ -47,8 +48,9 @@ function App() {
                     <Route path="/movies/:movieId" element={<MovieDetaiols/>} />
                     <Route path="/movies/:movieId/theatres/:theatreId/shows" element={<ShowsList />} />
                     <Route path="/shows/:showId/seats" element={<SeatList />} />
+                    <Route path="/payment" element={<Booking/>} />
+                    <Route path="/booking/history" element={<MyBooking/>}/>
                 </Route>
- 
                 <Route element={
                     <ProtectedRoute allowedRole="admin">
                         <AdminLayout />
@@ -62,10 +64,9 @@ function App() {
                     <Route path="/admin/movies" element={<MovieList />} />
                     <Route path="/admin/create-show" element={<Createshow/>} />
                     <Route path="/admin/all-show" element={<AllShow/>} />
-
+                    <Route path="/booking/all" element={<AllBookings/>}/>
                 </Route>
             </Routes>
-
             <ToastContainer />
         </>
     );

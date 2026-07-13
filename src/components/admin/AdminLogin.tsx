@@ -1,4 +1,3 @@
-// import React from 'react'
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -9,12 +8,16 @@ import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Paper from "@mui/material/Paper";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { toast } from "react-toastify";
 const AdminLogin = () => {
     const { adminLogin } = useContext(AuthContext)!;
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [showPassword,setShowPassword]=useState(false);
 
     const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
@@ -24,11 +27,11 @@ const AdminLogin = () => {
             if (data.success) {
                 navigate("/admin/dashboard");
             } else {
-                setError(data.message);
+                toast.error(data.message);
             }
         } catch (err: unknown) {
             if (axios.isAxiosError(err)) {
-                setError(err.response?.data?.message || "Login failed");
+                toast.error(err.response?.data?.message);
             } else {
                 setError("Something went wrong");
             }
@@ -60,6 +63,8 @@ const AdminLogin = () => {
                         display: "flex",
                         flexDirection: "column",
                         gap: 3,
+                        position:"relative"
+
                     }}
                 >
                     <Box
@@ -87,15 +92,19 @@ const AdminLogin = () => {
                     <TextField
                         fullWidth
                         label="Enter Password"
-                        type="password"
+                        type={showPassword ? "text":"password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+                    <Box sx={{position:"absolute",right:10,top:"66%"}}>
+                        <Button onClick={()=>setShowPassword(!showPassword)}>{showPassword?<VisibilityOffIcon/>:<VisibilityIcon/>}</Button>
+                    </Box>
                     {error && (
                         <Typography color="error" sx={{textAlign:"center"}}>
                             {error}
                         </Typography>
                     )}
+                    
                     <Button
                         type="submit"
                         variant="contained"

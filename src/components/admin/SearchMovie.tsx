@@ -51,7 +51,7 @@ const SearchMovie = () => {
             setLoading(true);
             const res=await apiData.post("/admin/add-movie",{tmdbId});
             if(res.data.success){
-                toast.success("res.data.message");
+                toast.success(res.data.message);
             }
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -164,6 +164,7 @@ const SearchMovie = () => {
                                     fullWidth
                                     sx={{ mt: 2 }}
                                     onClick={() => addMovie(String(movie.id))}
+                                    disabled={loading}
                                 >
                                     Add Movie
                                 </Button>

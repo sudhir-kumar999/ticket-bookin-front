@@ -75,7 +75,17 @@ function Createshow() {
                 reg_Price: Number(regPrice),
                 prem_Price: Number(premPrice),
             });
-            toast.success(res.data.message);
+            if(res.data.success){
+                toast.success(res.data.message);
+                setMovieId("");
+                setTheatreId("");
+                setName("");
+                setShowDate("");
+                setShowStartTime("");
+                setShowEndTime("");
+                setRegPrice("");
+                setPremPrice("");
+            }
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 toast.error(err.response?.data?.message);
