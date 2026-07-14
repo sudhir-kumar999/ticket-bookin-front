@@ -15,6 +15,12 @@ interface Seats {
   seatType: string;
   status: string;
 }
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: "user" | "admin";
+}
 interface Shows{
     id:string
     prem_Price:number
@@ -34,6 +40,7 @@ interface Booking{
     show:Shows
     status:string
     paymentStatus:string|null
+    user:User
 }
 const AllBookings = () => {
     const [booked,setBooked]=useState<Booking[]>([]);
@@ -97,6 +104,9 @@ const AllBookings = () => {
                             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                                 <Typography>
                                     <strong>Show Name:</strong> {ele?.show?.showName}
+                                </Typography>
+                                <Typography>
+                                    <strong>User Email:</strong> {ele?.user.email}
                                 </Typography>
                                 <Typography>
                                     <strong>Show Date:</strong> {ele.show.showDate}
