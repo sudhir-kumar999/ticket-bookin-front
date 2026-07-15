@@ -12,8 +12,12 @@ import { toast } from "react-toastify";
 interface Movie {
   id: string;
   title: string;
+  poster: string;
+  releaseDate: string;
+  rating: number;
+  overview: string;
+  duration:number
 }
-
 interface Theatre {
   id: string;
   name: string;
@@ -28,8 +32,6 @@ function Createshow() {
     const [showDate, setShowDate] = useState("");
     const [showStartTime, setShowStartTime] = useState("");
     const [showEndTime, setShowEndTime] = useState("");
-    const [regPrice, setRegPrice] = useState("");
-    const [premPrice, setPremPrice] = useState("");
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -62,6 +64,11 @@ function Createshow() {
             }
         }
     }
+    function toHoursAndMinutes(totalMinutes:number) {
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        return { hours, minutes };
+    }
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         try {
@@ -71,9 +78,7 @@ function Createshow() {
                 name,
                 showDate,
                 showStartTime,
-                showEndTime,
-                reg_Price: Number(regPrice),
-                prem_Price: Number(premPrice),
+                showEndTime
             });
             if(res.data.success){
                 toast.success(res.data.message);
@@ -83,8 +88,6 @@ function Createshow() {
                 setShowDate("");
                 setShowStartTime("");
                 setShowEndTime("");
-                setRegPrice("");
-                setPremPrice("");
             }
         } catch (err) {
             if (axios.isAxiosError(err)) {
@@ -134,11 +137,15 @@ function Createshow() {
                         onChange={(e) => setMovieId(e.target.value)}
                         fullWidth
                     >
-                        {movies.map((movie) => (
-                            <MenuItem key={movie.id} value={movie.id}>
-                                {movie.title}
-                            </MenuItem>
-                        ))}
+                        {movies.map((movie) => {
+                            const { hours, minutes } = toHoursAndMinutes(movie.duration);
+
+                            return (
+                                <MenuItem key={movie.id} value={movie.id}>
+                                    {movie.title} {"=>" } Duration ({hours}h {minutes}m)
+                                </MenuItem>
+                            );
+                        })}
                     </TextField>
                     <TextField
                         select
@@ -208,20 +215,6 @@ function Createshow() {
                             gap: 2,
                         }}
                     >
-                        <TextField
-                            type="number"
-                            label="Regular Price"
-                            value={regPrice}
-                            onChange={(e) => setRegPrice(e.target.value)}
-                            fullWidth
-                        />
-                        <TextField
-                            type="number"
-                            label="Premium Price"
-                            value={premPrice}
-                            onChange={(e) => setPremPrice(e.target.value)}
-                            fullWidth
-                        />
                     </Box>
                     <Button
                         type="submit"

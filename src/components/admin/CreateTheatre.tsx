@@ -9,6 +9,15 @@ import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import apiData from "../../../api/apidata";
 import axios from "axios";
+import { toast } from "react-toastify";
+import Card from "@mui/material/Card";
+import AddIcon from "@mui/icons-material/Add";
+interface Box{
+    seatType:string
+    rows:number
+    columns:number
+    price:number
+}
 function LocationMarker({
     latitude,
     longitude,
@@ -36,13 +45,55 @@ const CreateTheatre = () => {
     const [longitude, setLongitude] = useState(77.209);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [boxNumber, setBoxNumber] = useState<Box[]>([
+        {
+            seatType: "",
+            rows: 0,
+            columns: 0,
+            price: 0,
+        },
+    ]);
+
+    const addData = () => {
+        if(boxNumber.length<5){
+            setBoxNumber((prev) => [
+                ...prev,
+                {
+                    seatType: "",
+                    rows: 0,
+                    columns: 0,
+                    price: 0,
+                },
+            ]);
+        }else{
+            toast.error("only 5 rows can be created");
+        }
+    };
+
+    const handleChange = (
+        index: number,
+        field: keyof Box,
+        value: string | number
+    ) => {
+        const updated = [...boxNumber];
+        updated[index][field] = value as never;
+        setBoxNumber(updated);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const filteredBoxes = boxNumber.filter((box) =>
+            box.seatType.trim() !== "" &&
+            box.rows > 0 &&
+            box.columns > 0 &&
+            box.price > 0
+        );
         const theatreData = {
             name,
             address,
             latitude,
             longitude,
+            seatMap:filteredBoxes
         };
         try {
             setLoading(true);
@@ -53,10 +104,12 @@ const CreateTheatre = () => {
                 setLatitude(28.6139);
                 setLongitude(77.209);
                 setError("");
+                toast.success(response.data.message);
             }
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 setError(err.response?.data?.message || "Login failed");
+                toast.error(err.response?.data?.message);
             } else {
                 setError("Something went wrong");
             }
@@ -77,8 +130,8 @@ const CreateTheatre = () => {
             <Paper
                 elevation={5}
                 sx={{
-                    width: 700,
-                    maxWidth: "95%",
+                    width: 800,
+                    maxWidth: "100%",
                     p: 4,
                     borderRadius: 3,
                 }}
@@ -193,6 +246,60 @@ const CreateTheatre = () => {
                             }}
                         />
                     </Box>
+
+                    {boxNumber.map((ele, index) => (
+                        <Card key={index} sx={{ p: 2, mb: 2 }}>
+                            <Box sx={{display:"flex",justifyContent:"space-between"}}>
+
+                                <TextField
+                                    label="Seat Type"
+                                    value={ele.seatType}
+                                    onChange={(e) =>
+                                        handleChange(index, "seatType", e.target.value)
+                                    }
+                                />
+
+                                <TextField
+                                    label="Rows"
+                                    type="number"
+                                    value={ele.rows}
+                                    onChange={(e) =>
+                                        handleChange(index, "rows", Number(e.target.value))
+                                    }
+                                />
+
+                                <TextField
+                                    label="Columns"
+                                    type="number"
+                                    value={ele.columns}
+                                    onChange={(e) =>
+                                        handleChange(index, "columns", Number(e.target.value))
+                                    }
+                                />
+
+                                <TextField
+                                    label="Price"
+                                    type="number"
+                                    value={ele.price}
+                                    onChange={(e) =>
+                                        handleChange(index, "price", Number(e.target.value))
+                                    }
+                                />
+
+                                <TextField
+                                    label="Total Seat"
+                                    value={ele.rows * ele.columns}
+                                    slotProps={{
+                                        htmlInput: {
+                                            readOnly: true,
+                                        },
+                                    }}
+                                />
+
+                                <Button onClick={addData}><AddIcon/></Button>
+                            </Box>
+                        </Card>
+                    ))}
                     <Button
                         variant="contained"
                         type="submit"

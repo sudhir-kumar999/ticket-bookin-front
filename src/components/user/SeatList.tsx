@@ -6,7 +6,6 @@ import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
 import { toast } from "react-toastify";
 import Button from "@mui/material/Button";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -22,7 +21,6 @@ interface Seats {
 
 const SeatList = () => {
     const { showId } = useParams();
-    const [loading, setLoading] = useState(true);
     const [seat, setSeat] = useState<Seats[]>([]);
     const [amount,setAmount]=useState(0);
     const [seatId,setSeatId]=useState<Seats[]>([]);
@@ -30,7 +28,6 @@ const SeatList = () => {
 
     const fetchSeat = async () => {
         try {
-            setLoading(true);
             const res = await apiData.get(`/user/shows/${showId}/seats`);
             if (res.data.success) {
                 setSeat(res.data.data);
@@ -51,8 +48,6 @@ const SeatList = () => {
             } else {
                 toast.error("something went wrong");
             }
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -60,7 +55,12 @@ const SeatList = () => {
         fetchSeat();
     }, []);
 
-    async function handleSeatClick(seatId: string) {
+    async function handleSeatClick(e: React.MouseEvent<HTMLDivElement>) {
+        const target = e.target as HTMLElement;
+        const card = target.closest("[data-seat]");
+        if (!card) return;
+        const seatId = card.getAttribute("data-seat");
+        if (!seatId) return;
         try {
             const res = await apiData.post(`/user/shows/${showId}/toggle-seat`, {
                 seatId,
@@ -85,20 +85,15 @@ const SeatList = () => {
             }
         });
     }
-    if (loading) {
-        return (
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    minHeight: "100vh",
-                }}
-            >
-                <CircularProgress />
-            </Box>
-        );
-    }
+    const groupedSeats: Record<string, Seats[]> = {};
+
+    seat.forEach((ele) => {
+        if (!groupedSeats[ele.row]) {
+            groupedSeats[ele.row] = [];
+        }
+        groupedSeats[ele.row].push(ele);
+    });
+
     return (
         <Box
             sx={{
@@ -119,83 +114,59 @@ const SeatList = () => {
             >
         .
             </Box>
-            <Typography variant="h5" sx={{ mb: 2 }}>
-        Premium Seats
-            </Typography>
-            <Grid container spacing={2} sx={{ maxWidth: "70vw" }}>
-                {seat
-                    .filter((s) => s.seatType === "Premium")
-                    .map((ele: Seats) => (
-                        <Grid key={ele.id}>
-                            <Card
-                                sx={{
-                                    width: "100px",
-                                    p: 2,
-                                    backgroundColor:
-                                    ele.heldByMe
-                                        ? "green"
-                                        : ele.status === "booked"
-                                            ? "gray"
-                                            : ele.status === "held"
-                                                ? "yellow"
-                                                : "white",
-                                    color:
-                                    ele.heldByMe || ele.status === "booked"
-                                        ? "white"
-                                        : "black",
-                                    cursor: "pointer",
-                                }}
-                                onClick={() => handleSeatClick(ele.id)}
-                            >
-                                <Typography>{ele.seatNumber}</Typography>
-                                <Typography>₹ {ele.price}</Typography>
-                                <Typography>{ele.status}</Typography>
-                            </Card>
-                        </Grid>
-                    ))}
-            </Grid>
 
-            <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>
-        Regular Seats
+            <Typography variant="h5" sx={{ mb: 2 }}>
+    Seats
             </Typography>
-            {seat.length === 0 ? (
-                <Typography>No Movie Found.</Typography>
-            ) : (
-                <Grid container spacing={2} sx={{ maxWidth: "70vw" }}>
-                    {seat
-                        .filter((s) => s.seatType === "Regular")
-                        .map((ele) => (
-                            <Grid key={ele.id}>
-                                <Card
-                                    sx={{
-                                        width: "100px",
-                                        p: 2,
-                                        backgroundColor:
-                                    ele.heldByMe
-                                        ? "green"
-                                        : ele.status === "booked"
-                                            ? "gray"
-                                            : ele.status === "held"
-                                                ? "yellow"
-                                                : "white",
-                                        color:
-                                    ele.heldByMe || ele.status === "booked"
-                                        ? "white"
-                                        : "black",
-                                        cursor: "pointer",
-                                    }}
-                                    onClick={() => {
-                                        handleSeatClick(ele.id);
-                                    }}
-                                >
-                                    <Typography>{ele.seatNumber}</Typography>
-                                    <Typography>₹ {ele.price}</Typography>
-                                    <Typography>{ele.status}</Typography>
-                                </Card>
-                            </Grid>
-                        ))}
-                </Grid>
-            )}
+            <Box
+                sx={{
+                    display: "grid",
+                    gridTemplateRows: `repeat(${Math.min(seat.length, 5)}, 1fr)`,
+                    gap: 2,
+                }}
+            >
+                {Object.keys(groupedSeats).map((row) => (
+                    <Box key={row} sx={{ mb: 3 }}>
+                        <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+    Row {row}
+                        </Typography>
+                        <Grid
+                            container
+                            spacing={2}
+                            sx={{ maxWidth: "70vw" }}
+                            onClick={handleSeatClick}
+                        >
+                            {groupedSeats[row].map((ele) => (
+                                <Grid key={ele.id}>
+                                    <Card
+                                        data-seat={ele.id}
+                                        sx={{
+                                            width: "100px",
+                                            p: 2,
+                                            backgroundColor: ele.heldByMe
+                                                ? "green"
+                                                : ele.status === "booked"
+                                                    ? "gray"
+                                                    : ele.status === "held"
+                                                        ? "yellow"
+                                                        : "white",
+                                            color:
+                ele.heldByMe || ele.status === "booked"
+                    ? "white"
+                    : "black",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        <Typography>{ele.seatNumber}</Typography>
+                                        <Typography>₹ {ele.price}</Typography>
+                                        <Typography>{ele.status}</Typography>
+                                    </Card>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </Box>
+                ))}
+            </Box>
             <Box sx={{ "& > :not(style)": { m: 1 } }}>
                 <Button
                     variant="contained"

@@ -39,7 +39,7 @@ export function AuthProvider({children}:{children:React.ReactNode}){
         } catch (err) {
             setUser(null);
             if (axios.isAxiosError(err)) {
-                toast.error(err.response?.data?.message);
+                // toast.error(err.response?.data?.message);
             }
         }finally{
             setLoading(false);
