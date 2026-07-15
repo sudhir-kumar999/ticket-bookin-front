@@ -1,6 +1,5 @@
 import { createContext, useEffect, useState } from "react";
 import apiData from "../../api/apidata";
-import { toast } from "react-toastify";
 import axios from "axios";
 
 interface User {
@@ -39,7 +38,6 @@ export function AuthProvider({children}:{children:React.ReactNode}){
         } catch (err) {
             setUser(null);
             if (axios.isAxiosError(err)) {
-                // toast.error(err.response?.data?.message);
             }
         }finally{
             setLoading(false);
